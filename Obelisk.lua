@@ -1,7 +1,10 @@
 --[[  Obelisk Extension (separate loadstring)
      - Adds a new "Obelisk" tab to your Obsidian UI
-     - Left: Dragon Obelisk upgrade button
-     - Right: Redeem All Rewards toggle (IDs 1 → 9)
+     - LEFT:
+         • Dragon Obelisk button
+         • Auto Upgrade (dropdown + toggle + speed + "once now")
+     - RIGHT:
+         • Redeem All Rewards toggle (IDs 1 → 9)
      - Requires your main script to expose getgenv().MY_SCRIPT with:
          MY_SCRIPT.ToServer  (ReplicatedStorage.Events.To_Server)
          MY_SCRIPT.Register(function(Window) ... end)
@@ -22,10 +25,12 @@ end
 
 local function attach(Window)
     -- Create the tab
-    local ObeliskTab = Window:AddTab('Obelisk/Adds', 'landmark')
+    local ObeliskTab = Window:AddTab('Obelisk', 'landmark')
 
-    -- LEFT: Dragon Obelisk
+    -- ============== LEFT SIDE ==============
     local G_Left = ObeliskTab:AddLeftGroupbox('Dragon Obelisk', 'zap')
+
+    -- One-click button: Dragon Obelisk upgrade
     G_Left:AddButton({
         Text = 'Activate Dragon Obelisk',
         Func = function()
@@ -36,7 +41,77 @@ local function attach(Window)
         end,
     })
 
-    -- RIGHT: Rewards (Redeem All Rewards)
+    -- ---- Auto Upgrade section ----
+    local Upgrade_Group = ObeliskTab:AddLeftGroupbox('Auto Upgrade', 'trending-up')
+
+    local AutoUpgOn = false
+    local AutoUpgDelay = 0.25
+
+    -- UI label -> server Upgrading_Name map
+    local UpgradeMap = {
+        ["Damage"]    = "Damage",
+        ["Star Luck"] = "Star_Luck",
+        ["Coins"]     = "Coins",
+        ["Energy"]    = "Energy",
+    }
+    local SelectedUpgLabel = "Damage"     -- default selection
+    local SelectedUpgName  = UpgradeMap[SelectedUpgLabel]
+
+    local function sendUpgradeOnce(upgName)
+        if not upgName or upgName == "" then return end
+        local args = {
+            {
+                Upgrading_Name = upgName,
+                Action = "_Upgrades",
+                Upgrade_Name = "Upgrades",
+            }
+        }
+        Script.ToServer:FireServer(unpack(args))
+    end
+
+    local function startAutoUpgrade()
+        task.spawn(function()
+            while AutoUpgOn do
+                sendUpgradeOnce(SelectedUpgName)
+                task.wait(AutoUpgDelay)
+            end
+        end)
+    end
+
+    Upgrade_Group:AddDropdown('Ob_AutoUpgChoice', {
+        Text = 'Upgrade',
+        Values = { 'Damage', 'Star Luck', 'Coins', 'Energy' },
+        Callback = function(label)
+            SelectedUpgLabel = label
+            SelectedUpgName  = UpgradeMap[label]
+            print("[Obelisk] Auto Upgrade selected:", label, "→", SelectedUpgName)
+        end,
+    })
+
+    Upgrade_Group:AddToggle('Ob_AutoUpgToggle', {
+        Text = 'Auto Upgrade (selected)',
+        Default = false,
+        Callback = function(on)
+            AutoUpgOn = on
+            if on then startAutoUpgrade() end
+        end,
+    })
+
+    Upgrade_Group:AddSlider('Ob_AutoUpgDelay', {
+        Text = 'Upgrade Speed (s)',
+        Default = AutoUpgDelay,
+        Min = 0.01, Max = 2.00, Rounding = 2,
+        Callback = function(v) AutoUpgDelay = v end,
+    })
+
+    Upgrade_Group:AddButton({
+        Text = 'Upgrade Once Now',
+        Func = function()
+            sendUpgradeOnce(SelectedUpgName)
+        end,
+    })
+
+    -- ============== RIGHT SIDE ==============
     local G_Right = ObeliskTab:AddRightGroupbox('Rewards', 'gift')
 
     local RedeemOn = false
@@ -65,7 +140,7 @@ local function attach(Window)
     })
 end
 
--- Preferred: register via main script’s hook (gives us the Window handle)
+-- Preferred: register via main script’s hook
 if type(Script.Register) == "function" then
     Script.Register(function(Window)
         attach(Window)
