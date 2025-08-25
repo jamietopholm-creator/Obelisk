@@ -41,6 +41,22 @@ local function attach(Window)
         end,
     })
 
+     -- One-click button: Pirate Obelisk upgrade (same style as Dragon button)
+G_Left:AddButton({
+    Text = 'Activate Pirate Obelisk',
+    Func = function()
+        local args = {
+            {
+                Upgrading_Name = "Obelisk",
+                Action = "_Upgrades",
+                Upgrade_Name = "Pirate_Obelisk",
+            },
+        }
+        Script.ToServer:FireServer(unpack(args))
+    end,
+})
+
+     
     -- ---- Auto Upgrade section ----
     local Upgrade_Group = ObeliskTab:AddLeftGroupbox('Auto Upgrade', 'trending-up')
 
