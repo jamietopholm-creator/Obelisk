@@ -22,7 +22,7 @@ end
 
 local function attach(Window)
     -- Create the tab
-    local ObeliskTab = Window:AddTab('Obelisk', 'landmark')
+    local ObeliskTab = Window:AddTab('Obelisk/Adds', 'landmark')
 
     -- LEFT: Dragon Obelisk
     local G_Left = ObeliskTab:AddLeftGroupbox('Dragon Obelisk', 'zap')
