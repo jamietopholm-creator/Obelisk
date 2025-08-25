@@ -56,6 +56,22 @@ G_Left:AddButton({
     end,
 })
 
+
+     -- One-click button: Soul Obelisk upgrade (same style as Dragon/Pirate)
+G_Left:AddButton({
+    Text = 'Activate Soul Obelisk',
+    Func = function()
+        local args = {
+            {
+                Upgrading_Name = "Obelisk",
+                Action = "_Upgrades",
+                Upgrade_Name = "Soul_Obelisk",
+            },
+        }
+        Script.ToServer:FireServer(unpack(args))
+    end,
+})
+
      
     -- ---- Auto Upgrade section ----
     local Upgrade_Group = ObeliskTab:AddLeftGroupbox('Auto Upgrade', 'trending-up')
