@@ -88,6 +88,21 @@ G_Left:AddButton({
     end,
 })
 
+     -- One-click button: Slayer Obelisk upgrade (same style as others)
+G_Left:AddButton({
+    Text = 'Activate Slayer Obelisk',
+    Func = function()
+        local args = {
+            {
+                Upgrading_Name = "Obelisk",
+                Action = "_Upgrades",
+                Upgrade_Name = "Slayer_Obelisk",
+            },
+        }
+        Script.ToServer:FireServer(unpack(args))
+    end,
+})
+
      
     -- ---- Auto Upgrade section ----
     local Upgrade_Group = ObeliskTab:AddLeftGroupbox('Auto Upgrade', 'trending-up')
