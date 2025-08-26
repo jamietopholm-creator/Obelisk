@@ -119,6 +119,22 @@ G_Left:AddButton({
     end,
 })
 
+
+     -- One-click button: Clover Obelisk upgrade
+G_Left:AddButton({
+    Text = 'Activate Clover Obelisk',
+    Func = function()
+        local args = {
+            {
+                Upgrading_Name = "Obelisk",
+                Action = "_Upgrades",
+                Upgrade_Name = "Clover_Obelisk",
+            },
+        }
+        Script.ToServer:FireServer(unpack(args))
+    end,
+})
+
      
     -- ---- Auto Upgrade section ----
     local Upgrade_Group = ObeliskTab:AddLeftGroupbox('Auto Upgrade', 'trending-up')
