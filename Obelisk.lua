@@ -135,6 +135,23 @@ G_Left:AddButton({
     end,
 })
 
+
+     -- One-click button: Leaf Obelisk (add this to the Obelisk tab's left group `G_Left`)
+G_Left:AddButton({
+    Text = 'Activate Leaf Obelisk',
+    Func = function()
+        local args = {
+            {
+                Upgrading_Name = "Obelisk",
+                Action = "_Upgrades",
+                Upgrade_Name = "Leaf_Obelisk",
+            },
+        }
+        Script.ToServer:FireServer(unpack(args))
+    end,
+})
+
+     
      
     -- ---- Auto Upgrade section ----
     local Upgrade_Group = ObeliskTab:AddLeftGroupbox('Auto Upgrade', 'trending-up')
